@@ -1,0 +1,8 @@
+---
+cisco:
+  host: cisco1.test.com
+  username: cisco
+  password: cisco
+  device_type: cisco_ios
+  use_session_log: off
+  

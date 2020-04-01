@@ -1,0 +1,23 @@
+---
+network_devices:
+  - device1:
+      host: device1
+      username: cisco
+      password: cisco
+      device_type: cisco_asa
+      use_session_log: off
+      ip_addresses:
+        - 1.1.1.1
+        - 2.2.2.2
+        - 3.3.3.3
+  - device2:
+      host: device2
+      username: cisco
+      password: cisco
+      device_type: cisco_asa
+      use_session_log: off
+      ip_addresses:
+        - 4.4.4.4
+        - 5.5.5.5
+        - 6.6.6.6
+

@@ -1,0 +1,14 @@
+---
+- name: Exercise 3a
+  hosts: localhost
+  tasks:
+  - debug: 
+
+- name: Another play
+  hosts: cisco
+  gather_facts: false
+  tasks:
+  - debug:
+      msg: "ansible_connection: '{{ ansible_connection }}'"
+  - debug:
+      msg: "ansible_host: '{{ ansible_host }}'"
