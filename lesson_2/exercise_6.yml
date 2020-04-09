@@ -1,0 +1,22 @@
+---
+- name: arista play
+  hosts: arista
+  gather_facts: False
+  connection: localhost
+  tasks:
+  - name: show ip arp task
+    eos_command:
+      commands:
+      - show ip arp
+    register: output
+  - name: print output
+    debug:
+      msg: "{{ output }}"
+  - name: json command
+    eos_command:
+      commands:
+      - show ip arp | json
+    register: output_json
+  - name: print json
+    debug:
+      msg: "{{ output_json }}"

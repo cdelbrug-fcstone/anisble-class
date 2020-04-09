@@ -1,0 +1,13 @@
+- name: nxos_command Play
+  hosts: nxos
+  gather_facts: False
+  tasks:
+  - name: Gather output
+    nxos_command:
+      commands:
+      - show version
+      - show lldp neighbors
+    register: output
+  - name: print output
+    debug:
+      var: output['stdout'][1]

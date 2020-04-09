@@ -1,0 +1,13 @@
+- name: juniper play
+  hosts: juniper
+  connection: localhost
+  gather_facts: False
+  tasks:
+  - name: show interfaces terse
+    junos_command:
+      commands:
+      - show interfaces terse
+    register: output
+  - name: print output
+    debug:
+      msg: "Primary IP: {{ output['stdout_lines'][0][-1].split()[-1] }}"

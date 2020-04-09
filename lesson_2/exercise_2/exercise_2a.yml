@@ -1,0 +1,8 @@
+---
+- name: exercise2a
+  hosts: cisco
+  gather_facts: off
+  tasks:
+    - name: print bgp asn
+      debug:
+        msg: "The ASN for host {{ inventory_hostname }} is {{ bgp_asn }}, the router-id is {{ bgp_router_id }}"
