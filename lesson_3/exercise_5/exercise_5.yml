@@ -1,0 +1,12 @@
+---
+- name: generate bgp config play
+  hosts: nxos
+  connection: localhost
+  gather_facts: False
+
+  tasks:
+   - name: config generate
+     template:
+      src: template.j2
+      dest: "./CFGS/{{inventory_hostname}}.txt"
+

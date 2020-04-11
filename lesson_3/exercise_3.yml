@@ -1,0 +1,49 @@
+---
+- name: cisco lldp play
+  hosts: cisco1:cisco2
+  connection: local
+  gather_facts: False
+
+  tasks:
+
+  - name: show lldp neighbors
+    ios_command:
+      commands: show lldp neighbors
+    register: output
+
+    # this task happens from the bottom up in a way. the action - set_fact
+    # doesn't happen until the loop and when takes place. after the action, the register takes place.
+  - name: set fact output
+    set_fact:
+      output: "{{ item }}"
+    # when I find what I'm looking for in the loop item, set the variable
+    # output to the item that the loop is on
+    when: "'twb-sf-hpsw1' in item"
+    # loop through the list of output from task 1
+    loop: "{{ output['stdout_lines'][0] }}"
+    register: lldp_entry
+
+     # I'm confirming the data structure of the lldp_entry variable
+     # for the next task
+#  - name: debug lldp_entry
+#    debug:
+#      var: lldp_entry['results'][5]['ansible_facts']['output'].split()
+
+  - name: split lldp entry
+    set_fact:
+      # go through the output, and split the line by whitepaces, making a list
+      lldp_entry: "{{ lldp_entry['results'][5]['ansible_facts']['output'].split() }}"
+  
+  - name: split lldp entry
+    # set variables for each entry in the list I want.
+    set_fact:
+      remote_device: "{{ lldp_entry[0] }}"
+      local_intf: "{{ lldp_entry[1] }}"
+      remote_intf: "{{ lldp_entry[4] }}"
+
+  - name: final print
+    debug:
+      msg: 
+      - Remote device: "{{ remote_device }}"
+      - Local intf: "{{ local_intf }}"
+      - Remote intf: "{{ remote_intf }}"

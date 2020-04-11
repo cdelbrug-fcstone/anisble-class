@@ -1,0 +1,33 @@
+---
+- name: conditional play
+  hosts: all:!localhost
+  connection: localhost
+  gather_facts: False
+
+  tasks:
+  - name: eos command task
+    eos_command:
+      commands: show ip arp
+    when: ansible_network_os == "eos"
+    register: output_eos
+    tags: eos
+
+  - name: ios command task
+    ios_command:
+      commands: show ip arp
+    when: ansible_network_os == "ios"
+    register: output_ios
+    tags: ios
+
+  - name: junos command task
+    junos_command:
+      commands: show arp
+    when: ansible_network_os == "junos"
+    register: junos_output
+    tags: junos
+
+  - name: print output eos
+    debug:
+      msg: "{{ output_eos }}"
+    when: ansible_network_os == "eos"
+    tags: eos

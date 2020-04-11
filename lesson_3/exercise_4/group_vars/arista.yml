@@ -1,0 +1,11 @@
+---
+def_gateway: 10.220.88.1
+ports:
+  Ethernet1: { "vlan": 1, "stp": True }
+  Ethernet2: { "vlan": 2, "stp": False }
+  Ethernet3: { "vlan": 3, "stp": False }
+  Ethernet4: { "vlan": 4, "stp": False }
+  Ethernet5: { "vlan": 5, "stp": False }
+  Ethernet6: { "vlan": 6, "stp": False }
+  Ethernet7: { "vlan": 7, "stp": False }
+

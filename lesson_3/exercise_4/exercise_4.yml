@@ -1,0 +1,12 @@
+---
+- name: Jinja2 exercise 4
+  hosts: arista
+  connection: localhost
+  gather_facts: False
+
+  tasks:
+
+  - name: templatize
+    template:
+      src: template.j2
+      dest: "./CFGS/{{ inventory_hostname }}.txt"
