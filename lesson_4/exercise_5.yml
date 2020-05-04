@@ -1,0 +1,53 @@
+---
+- name: nxos play about interfaces
+  hosts: nxos
+  connection: local
+  gather_facts: False
+  
+  tasks:
+
+  - name: configure port mode
+    nxos_interfaces:
+      config:
+      - name: "{{ intf_name }}"
+        mode: "{{ intf_mode }}"
+
+  - name: configure trunk mode
+    nxos_l2_interface:
+      name: "{{ intf_name }}"
+      mode: "{{ switchport_mode }}"
+        
+  - name: configure native trunk vlan
+    nxos_l2_interfaces:
+      config:
+      - name: "{{ intf_name }}"
+        trunk:
+          native_vlan: "{{ native_vlan }}"
+
+  - name: show command
+    nxos_command:
+      commands:
+      - show interface {{ intf_name }} trunk | json
+    register: output
+    tags: verify
+
+  - name: debug output
+    debug:
+      var: output['stdout'][0]['TABLE_interface']['ROW_interface']
+    tags: verify
+ 
+  - name: set output fact
+    set_fact:
+      refined_output: "{{ output['stdout'][0]['TABLE_interface']['ROW_interface'] }}"
+    tags: verify
+
+  - name: debug
+    debug:
+      var: refined_output
+    tags: verify
+
+  - name: assert that config is correct
+    assert:
+      that:
+        - refined_output['interface'] == 'Ethernet1/1'
+    tags: verify

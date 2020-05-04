@@ -1,0 +1,22 @@
+---
+- name: someplay about banners
+  hosts: cisco
+  connection: local
+  gather_facts: False
+  
+  tasks:
+  - name: create banner
+    ios_banner:
+      banner: login
+      text: |
+        ***************************
+         AUTHORIZED PERSONNEL ONLY
+        ***************************
+      state: present
+    notify: wr mem
+  
+  handlers:
+   - name: wr mem
+     ios_command:
+       commands: wr mem
+     changed_when: True

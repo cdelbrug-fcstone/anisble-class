@@ -1,0 +1,42 @@
+---
+- name: eos vlan playbook
+  hosts: arista
+  connection: local
+  gather_facts: False
+
+  tasks:
+
+  - name: create vlan
+    eos_vlans:
+      config:
+        - vlan_id: "{{ vlan_id }}"
+          name: "{{ vlan_name }}"
+      state: merged
+
+  - name: assign vlan to interfaces
+    eos_l2_interfaces:
+      config:
+        - name: "{{ interface_name }}"
+          access:
+            vlan: "{{ vlan_id }}"
+      state: merged
+
+  - name: show vlan
+    eos_command:
+      commands:
+        - show vlan | json
+    register: output
+    tags: verify
+
+#  - name: debug
+#    debug:
+#      var: output['stdout'][0]['vlans']['224']
+#    tags: verify
+
+  - name: assert statement
+    assert:
+      that:
+        - output['stdout'][0]['vlans']['224']['interfaces']['Ethernet5']
+      success_msg: "it exists"
+      fail_msg: "it doesn't exist"
+    tags: verify

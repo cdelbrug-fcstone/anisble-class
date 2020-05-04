@@ -1,0 +1,4 @@
+ipv4_addr: 10.227.24.2
+netmask: /24
+peer_ip: 10.227.24.1
+intf_name: Ethernet1/1

@@ -1,0 +1,52 @@
+---
+- name: interface config nxos
+  hosts: nxos
+  connection: local
+  gather_facts: False
+  
+  tasks:
+
+  - name: configure interface mode
+    nxos_interfaces:
+      config:
+       - name: Ethernet1/3
+         mode: layer3
+  
+  - name: configure ip
+    nxos_l3_interfaces:
+      config:
+       - name: Ethernet1/3
+         ipv4:
+          - address: "{{ ipv4_addr }}{{ netmask }}"
+      state: merged
+
+  - name: ping test nxos2
+    net_ping:
+      dest: 10.227.24.2
+    when: inventory_hostname == "nxos1"
+    register: nxos2_ping
+    tags: verify
+
+  - name: ping test nxos1
+    net_ping:
+      dest: 10.227.24.1
+    when: inventory_hostname == "nxos2"
+    register: nxos1_ping
+    tags: verify
+
+  - debug:
+      var: nxos1_ping
+
+  - debug:
+      var: nxos2_ping
+
+  - name: assert that pings were successful
+    assert:
+      that:
+        - nxos2_ping['failed'] == False
+        - nxos1_ping['failed'] == False
+      success_msg: "Pings successful"
+      fail_msg: "Ping failed"
+    tags: verify
+
+  

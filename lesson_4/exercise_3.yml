@@ -1,0 +1,37 @@
+---
+- name: interface config nxos
+  hosts: nxos
+  connection: local
+  gather_facts: False
+  
+  tasks:
+
+  - name: configure interface mode
+    nxos_interfaces:
+      config:
+       - name: Ethernet1/3
+         mode: layer3
+  
+  - name: configure ip
+    nxos_l3_interfaces:
+      config:
+       - name: Ethernet1/3
+         ipv4:
+          - address: "{{ ipv4_addr }}{{ netmask }}"
+      state: merged
+
+  - name: ping test to each other
+    net_ping:
+      dest: "{{ peer_ip }}"
+    register: ping_results
+    tags: verify
+
+  - name: assert that pings were successful
+    assert:
+      that:
+        - ping_results['failed'] == False
+      success_msg: "Pings successful"
+      fail_msg: "Ping failed"
+    tags: verify
+
+  
