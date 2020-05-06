@@ -1,0 +1,21 @@
+---
+- name: ssh key test
+  connection: localhost
+  hosts: cisco1:cisco2
+  gather_facts: False
+
+  tasks:
+    - name: show users
+      ios_command:
+        commands:
+          - show users
+      register: output
+
+    - name: verify correct user
+      assert:
+        that:
+          - "'student1' in output['stdout'][0]"
+
+#    - name: print output
+#      debug:
+#        var: output

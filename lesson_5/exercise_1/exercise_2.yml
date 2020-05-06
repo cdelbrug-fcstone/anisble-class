@@ -1,0 +1,21 @@
+---
+- name: cli config play except junos
+  hosts: all:!localhost:!juniper
+  connection: localhost
+  
+  tasks:
+
+  - name: cli_config task
+    cli_config:
+      config:"{{ lookup('template', '{{ ansible_network_os }}.j2') }}"
+
+- name: juniper play
+  hosts: juniper
+  connection: localhost
+  gather_facts: False
+
+  tasks:
+  
+  - name: config juniper cli_config
+    cli_config:
+      config:"{{ lookup('template', 'junos.j2') }}"

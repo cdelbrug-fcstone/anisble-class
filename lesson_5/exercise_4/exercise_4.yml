@@ -1,0 +1,26 @@
+---
+- name: generate and deploy bgp config play
+  hosts: nxos
+  connection: localhost
+  gather_facts: False
+
+  tasks:
+  - name: config generate and deploy
+    nxos_config:
+      src: template.j2
+    # template:
+    #   src: template.j2
+    #   dest: "./{{inventory_hostname}}.txt"
+
+  - name: wait for bgp to come up
+    pause:
+      seconds: 10
+
+  - name: verify bgp status
+    nxos_command:
+      commands: show ip bgp summary
+    register: output
+
+  - name: show bgp output
+    debug:
+      var: output

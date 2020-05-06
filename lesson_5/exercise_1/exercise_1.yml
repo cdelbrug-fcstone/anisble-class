@@ -1,0 +1,37 @@
+---
+- name: configure stuff on all device types
+  hosts: all:!localhost:!juniper
+  connection: localhost
+  gather_facts: True
+  
+  tasks:
+    
+    - name: configue eos
+      eos_config: 
+        src: eos.j2
+        save_when: changed
+      when: ansible_network_os == 'eos'
+
+    - name: configue ios
+      ios_config: 
+        src: ios.j2
+        save_when: changed
+      when: ansible_network_os == 'ios'
+
+    - name: configure nxos
+      nxos_config:
+        src: nxos.j2
+        save_when: changed
+      when: ansible_network_os == 'nxos'
+
+- name: configure stuff on junos
+  hosts: juniper
+  connection: localhost
+  gather_facts: False
+
+  tasks:
+  
+  - name: configure junos
+    junos_config:
+      src: junos.j2
+
