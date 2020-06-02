@@ -1,0 +1,14 @@
+- name: debug1
+  debug:
+    msg: "hi there"
+  tags: debug1
+
+- name: debug2
+  debug:
+    msg: "hello there"
+  tags: debug2
+
+- name: debug3
+  debug:
+    msg: "whatever!!!"
+  tags: debug3

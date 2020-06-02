@@ -1,0 +1,21 @@
+---
+- name: parse with genie
+  hosts: nxos
+  connection: localhost
+  gather_facts: False
+  collections:
+    - clay584.genie
+  
+  tasks:
+    - name: show interface grab
+      nxos_command:
+        commands: show interface
+      register: output
+
+    - name: parse the stuff
+      set_fact:
+        show_interface: "{{ output['stdout'][0] | clay584.genie.parse_genie(command='show interface', os='nxos') }}"
+
+    - name: print
+      debug:
+        var: show_interface

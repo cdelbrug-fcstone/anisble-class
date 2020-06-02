@@ -1,0 +1,18 @@
+---
+vrf_dict:
+  - vrf_color:
+      - blue:
+        - rd_value:
+          - 65000:1
+      - red:
+        - rd_value:
+          - 65000:2
+
+iface_dict:
+  - ifname:
+      - Loopback98:
+        - ifconfig:
+            - ip vrf forwarding blue
+      - Loopback99:
+        - ifconfig:
+            - ip vrf forwarding red

@@ -1,0 +1,8 @@
+---
+- name: some more role play with vrfs
+  hosts: cisco5:cisco6
+  connection: localhost
+  gather_facts: false
+  roles:
+  - cisco5
+  - cisco6

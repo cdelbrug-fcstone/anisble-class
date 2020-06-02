@@ -1,0 +1,9 @@
+---
+- name: get bgp hostvars
+  hosts: nxos1
+  connection: localhost
+  
+  tasks:
+    - name: print hostvars
+      debug:
+        var: hostvars['nxos2']

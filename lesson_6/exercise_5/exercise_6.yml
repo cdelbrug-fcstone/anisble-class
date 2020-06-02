@@ -1,0 +1,9 @@
+---
+- name: role play
+  hosts: arista:nxos:cisco
+  connection: localhost
+  roles:
+    - ios
+    - ios-xe
+    - nxos
+    - eos

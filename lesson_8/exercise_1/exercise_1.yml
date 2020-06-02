@@ -1,0 +1,12 @@
+---
+- name: play about combining lists to dicts
+  connection: local
+  hosts: nxos
+  gather_facts: False
+
+  tasks:
+
+    - name: gather output
+      nxos_command:
+        commands: show lldp neighbors
+      register: output

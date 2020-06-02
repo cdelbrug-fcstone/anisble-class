@@ -1,0 +1,10 @@
+---
+- name: include play test
+  connection: localhost
+  hosts: localhost
+  gather_facts: False
+
+  tasks:
+  - name: include time
+    import_tasks: subtask2.yml
+

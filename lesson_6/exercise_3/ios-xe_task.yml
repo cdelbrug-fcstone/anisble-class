@@ -1,0 +1,3 @@
+- name: ios-xe task
+  ios_config:
+    src: ios-xe.j2

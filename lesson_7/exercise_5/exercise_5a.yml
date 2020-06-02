@@ -1,0 +1,39 @@
+---
+- name: regex_findall
+  hosts: nxos
+  connection: localhost
+  gather_facts: False
+
+  tasks:
+
+    - name: execute command
+      nxos_command:
+        commands: show lldp neighbors
+      register: output
+
+    - name: strip headers
+      set_fact:
+        show_lldp_neighbors: "{{ output['stdout'][0] | regex_replace('Capability codes.*\\n.*\\n.*\\n.*') | trim }}"
+
+    - name: print
+      debug:
+        var: show_lldp_neighbors
+
+    - name: parse with regex
+      set_fact:
+        final_output: "{{ show_lldp_neighbors | regex_findall('^(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)\\s+(\\S+)', multiline=True) }}"
+
+    - name: print
+      debug:
+        var: final_output
+
+    - name: organize data
+      set_fact:
+        lldp:
+          remote_name: "{{ final_output[0][0] }}"
+          local_int: "{{ final_output[0][1] }}"
+          remote_int: "{{ final_output[0][4] }}"
+          
+    - name: print
+      debug:
+        var: lldp 

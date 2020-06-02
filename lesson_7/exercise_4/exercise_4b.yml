@@ -1,0 +1,24 @@
+---
+- name: parse with genie
+  hosts: nxos
+  connection: localhost
+  gather_facts: False
+  collections:
+    - clay584.genie
+  
+  tasks:
+    - name: show interface grab
+      nxos_command:
+        commands: show version
+      register: output
+
+    - name: parse the stuff
+      set_fact:
+        show_interface: "{{ output['stdout'][0] | clay584.genie.parse_genie(command='show version', os='nxos') }}"
+
+    - name: print
+      debug:
+        var: show_interface
+    - name: print
+      debug:
+        var: show_interface['platform']['software']['system_version']

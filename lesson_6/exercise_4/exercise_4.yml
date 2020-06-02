@@ -1,0 +1,30 @@
+---
+- name: exercise 4 play
+  connection: localhost
+  hosts: cisco:nxos:arista
+
+  tasks:
+
+    - name: configure ios
+      include_tasks: ios-task.yml
+      tags: always
+      when: ansible_facts.net_iostype is defined and
+            ansible_facts.net_iostype == "IOS"
+
+    - name: configure ios-xe
+      include_tasks: ios-xe-task.yml
+      when: ansible_facts.net_iostype is defined and
+            ansible_facts.net_iostype == "IOS-XE"
+      tags: always
+
+    - name: configure nxos
+      include_tasks: nxos-task.yml
+      when: "ansible_network_os == 'nxos'"
+      tags: always
+
+    - name: configure eos
+      include_tasks: eos-task.yml
+      when: "ansible_network_os == 'eos'"
+      tags: always
+
+

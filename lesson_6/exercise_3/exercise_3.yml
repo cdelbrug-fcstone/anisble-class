@@ -1,0 +1,15 @@
+---
+- name: ios config play with import
+  hosts: cisco
+  connection: localhost
+ 
+  tasks:
+
+    - name: configure ios devices
+      import_tasks: ios_task.yml
+      when: ansible_facts.net_iostype == "IOS"
+
+    - name: configure ios-xe devices
+      import_tasks: ios-xe_task.yml
+      when: ansible_facts.net_iostype == "IOS-XE"
+

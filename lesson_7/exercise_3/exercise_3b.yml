@@ -1,0 +1,25 @@
+---
+- name: arista vlan textfsm
+  hosts: arista
+  connection: localhost
+  gather_facts: False
+  vars:
+    template: "/home/cdelbrugge/ntc-templates/templates/arista_eos_show_vlan.textfsm"
+
+  tasks:
+    - name: show vlan grab
+      eos_command:
+        commands: show vlan
+      register: output
+
+    - name: debug
+      debug:
+        var: output['stdout'][0]
+
+    - name: textfsm parse
+      set_fact:
+        show_vlan: "{{ output['stdout'][0] | parse_cli_textfsm(template) }}"
+
+    - name: debug
+      debug:
+        var: show_vlan

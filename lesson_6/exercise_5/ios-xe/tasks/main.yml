@@ -1,0 +1,6 @@
+---
+- name: ios-xe task
+  ios_config:
+    src: main.j2
+  when: ansible_facts.net_iostype is defined and
+        ansible_facts.net_iostype == "IOS-XE"

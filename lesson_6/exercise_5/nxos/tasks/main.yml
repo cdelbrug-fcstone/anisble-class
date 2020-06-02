@@ -1,0 +1,5 @@
+---
+- name: nxos task
+  nxos_config:
+    src: main.j2
+  when: "ansible_network_os == 'nxos'"

@@ -1,0 +1,37 @@
+---
+- name: textfsm play about bgp stuff output ok
+  hosts: nxos
+  connection: localhost
+  gather_facts: False
+  vars:
+    fsm_template: "cisco_nxos_show_ip_bgp_summary.textfsm"
+
+  tasks:
+#   - name: debug
+#     debug:
+#       var: fsm_template
+    
+    - name: show ip bgp summary
+      nxos_command:
+        commands: 
+          - show ip bgp summary
+      register: output
+
+    - name: debug again
+      debug: 
+        var: output
+
+    - name: use textfsm on output
+      set_fact:
+        show_ip_bgp_summary: "{{ output['stdout'][0] | parse_cli_textfsm(fsm_template) }}"
+
+    - name: debug
+      debug:
+        var: show_ip_bgp_summary[0]['STATE_PFXRCD']
+
+    - name: assert
+      assert:
+        that:
+          - "'Shut' not in show_ip_bgp_summary[0]['STATE_PFXRCD']"
+          - show_ip_bgp_summary[0]['STATE_PFXRCD'] != "Idle"
+          - show_ip_bgp_summary[0]['STATE_PFXRCD'] >= "2"

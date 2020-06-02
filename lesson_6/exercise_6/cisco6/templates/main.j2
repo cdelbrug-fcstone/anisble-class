@@ -1,0 +1,12 @@
+ip vrf {{ vrf_name1 }}
+ rd {{ vrf_dist1 }}
+!
+ip vrf {{ vrf_name2 }}
+ rd {{ vrf_dist2 }}
+!
+interface {{ vrf_int1 }}
+ ip vrf forwarding {{ vrf_name1 }}
+!
+interface {{ vrf_int2 }}
+ ip vrf forwarding {{ vrf_name2 }}
+

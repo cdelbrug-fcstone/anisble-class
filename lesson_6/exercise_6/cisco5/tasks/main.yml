@@ -1,0 +1,3 @@
+- name: configure cisco5
+  ios_config:
+    src: main.j2
