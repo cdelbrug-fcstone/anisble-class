@@ -3,10 +3,48 @@
   connection: local
   hosts: nxos
   gather_facts: False
+  vars:
+    fsm_template: "/home/cdelbrugge/ntc-templates/templates/cisco_nxos_show_lldp_neighbors.textfsm"
 
   tasks:
 
     - name: gather output
       nxos_command:
         commands: show lldp neighbors
-      register: output
+      register: output 
+
+    - name: parse data
+      set_fact:
+        show_ip_lldp_neighbors: "{{ output['stdout'][0] | parse_cli_textfsm(fsm_template) }}"
+
+    - name: print parsed output
+      debug:
+        var: show_ip_lldp_neighbors
+     
+    - name: extract two lists
+      set_fact:
+        local_int: "{{ show_ip_lldp_neighbors | map(attribute='LOCAL_INTERFACE') | list }}"
+        remote_dev: "{{ show_ip_lldp_neighbors | map(attribute='NEIGHBOR') | list }}"
+
+    - name: print new lists
+      debug:
+        msg:
+          - "{{ local_int }}"
+          - "{{ remote_dev }}"
+
+    - name: zip the lists! index from each lined up into one list
+      set_fact:
+        zipped: "{{ local_int | zip(remote_dev) | list }}"
+
+    - name: print new zipped list
+      debug:
+        var: zipped
+
+    - name: make into one dict
+      set_fact:
+        lldp_dict: "{{ lldp_dict | default({}) | combine({item[0]: item[1]}) }}"
+      loop: "{{ zipped }}"
+
+    - name: print dict
+      debug:
+        var: lldp_dict

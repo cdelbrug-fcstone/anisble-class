@@ -1,0 +1,43 @@
+---
+- name: configure nxos vlans and compare vlans on each switch afterwards
+  hosts: nxos
+  connection: local
+  gather_facts: False
+
+  tasks:
+
+    - name: configure vlans on both switches
+      nxos_vlans:
+        config:
+          - vlan_id: "{{ vlan_id1 }}"
+            name: "{{ vlan_name1 }}"
+          - vlan_id: "{{ vlan_id2 }}"
+            name: "{{ vlan_name2 }}"
+
+    - name: extract vlan output
+      nxos_command:
+        commands: show vlan | json
+      register: vlan_output
+
+    - name: create lists from vlan_output
+      set_fact:
+        vlan_list: "{{ vlan_list | default([]) + [item['vlanshowbr-vlanid']] }}"
+      loop: "{{ vlan_output['stdout'][0]['TABLE_vlanbrief']['ROW_vlanbrief'] }}"
+
+#    - name: print new lists
+#      debug:
+#        var: vlan_list
+
+    - name: print common (intersect) vlans on both
+      debug:
+        var: hostvars['nxos1']['vlan_list'] | intersect(hostvars['nxos2']['vlan_list'])
+
+    - name: print unique(difference) vlans on nxos1
+      debug:
+        var: hostvars['nxos1']['vlan_list'] | difference(hostvars['nxos2']['vlan_list'])
+      when: inventory_hostname == 'nxos1'
+
+    - name: print unique(difference) vlans on nxos2
+      debug:
+        var: hostvars['nxos2']['vlan_list'] | difference(hostvars['nxos1']['vlan_list'])
+      when: inventory_hostname == 'nxos2'

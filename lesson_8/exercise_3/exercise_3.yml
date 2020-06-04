@@ -1,0 +1,49 @@
+---
+- name: play about combining lists to dicts with arista
+  connection: local
+  hosts: arista
+  gather_facts: False
+
+  tasks:
+
+    - name: gather output
+      nxos_command:
+        commands: show mac address-table | json
+      register: output 
+
+     
+    - name: set fact for mac table
+      set_fact:
+        show_mac_address_table: "{{ output['stdout'][0]['unicastTable']['tableEntries'] }}"
+
+    - name: print parsed output
+      debug:
+        var: show_mac_address_table
+
+    - name: extract two lists
+      set_fact:
+        int: "{{ show_mac_address_table | map(attribute='interface') | list }}"
+        mac: "{{ show_mac_address_table | map(attribute='macAddress') | list }}"
+
+    - name: print new lists
+      debug:
+        msg:
+          - "{{ int }}"
+          - "{{ mac }}"
+
+    - name: zip the lists! index from each lined up into one list
+      set_fact:
+        zipped: "{{ mac | zip(int) | list }}"
+
+    - name: print new zipped list
+      debug:
+        var: zipped
+
+    - name: make into one dict
+      set_fact:
+        mac_dict: "{{ mac_dict | default({}) | combine({item[0]: item[1]}) }}"
+      loop: "{{ zipped }}"
+
+    - name: print dict
+      debug:
+        var: mac_dict

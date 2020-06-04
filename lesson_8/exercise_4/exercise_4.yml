@@ -1,0 +1,30 @@
+---
+- name: play about extracting a list from dictionary
+  connection: local
+  hosts: arista
+  gather_facts: False
+
+  tasks:
+
+    - name: gather output
+      nxos_command:
+        commands: show mac address-table | json
+      register: output 
+
+     
+    - name: set fact for mac table
+      set_fact:
+        show_mac_address_table: "{{ output['stdout'][0]['unicastTable']['tableEntries'] }}"
+
+    - name: print parsed output
+      debug:
+        var: show_mac_address_table
+
+    - name: make into one list
+      set_fact:
+        mac_list: "{{ mac_list | default([]) + [item['macAddress']] }}"
+      loop: "{{ show_mac_address_table }}"
+
+    - name: print dict
+      debug:
+        var: mac_list
